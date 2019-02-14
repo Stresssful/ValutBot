@@ -3,7 +3,7 @@ var cheerio = require('cheerio'); //Парсинг
 var TelegramBot = require('node-telegram-bot-api');//Telegram-bot
 var fs=require('fs');//Робота з файлами
 
-var token = '655023513:AAElU5ZnMrIoBsmt4nlQOZ7xFPt6AivUjag';//Токен
+var token = '683429870:AAFYVsXZxSot3K3cIyH8vp-h_3j_lVTW4os';//Токен
 var url = 'http://ok-finance.net.ua';//Сторінка, яка парситься
 
 var bot = new TelegramBot(token, {polling: true});//створення бота
