@@ -145,7 +145,7 @@ function intervalFunc()
           		let key = Object.keys(cur_rates)[i];
 
           		cur_rates[key][0]=buy_price;
-          		cur_rates[key][1]=buy_price;
+          		cur_rates[key][1]=sell_price;
 
           		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
           			trigger=true;          		
@@ -161,7 +161,7 @@ function intervalFunc()
 
           		let key = Object.keys(cur_rates)[i+5];
           		cur_rates[key][0]=buy_price;
-          		cur_rates[key][1]=buy_price;
+          		cur_rates[key][1]=sell_price;
 
           		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
           			trigger=true;          		
