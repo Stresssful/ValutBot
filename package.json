@@ -1,0 +1,24 @@
+{
+  "name": "replacementsbot",
+  "version": "1.0.0",
+  "description": "My telegram bot",
+  "main": "bot.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "node-telegram-bot-api": "^0.29.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EtherDrake/ValutBot.git"
+  },
+  "author": "Viktor Kudriavtsev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/EtherDrake/ValutBot/issues"
+  },
+  "homepage": "https://github.com/EtherDrake/ValutBot#readme"
+}
