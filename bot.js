@@ -156,6 +156,9 @@ function intervalFunc()
                cur_rates["EURUSD"][0]=table.eq(6).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
                cur_rates["EURUSD"][1]=table.eq(6).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();
 
+               if(cur_rates["EURUSD"][0]!=Rates["EURUSD"][0] || cur_rates["EURUSD"][1]!=Rates["EURUSD"][1])
+                    trigger=true;
+
           	content=$('div.commercial').eq(0).children('.exchange_table').eq(0);
 			table=content.children('.line');			
 
