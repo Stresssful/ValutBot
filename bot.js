@@ -28,6 +28,7 @@ var Rates = {
 	"RUB": [0.0, 0.0],
 	"PLN": [0.0, 0.0],
 	"GBP": [0.0, 0.0],
+     "EURUSD": [0.0, 0.0],
 	"USD_Com": [0.0, 0.0],
 	"EUR_Com": [0.0, 0.0],
 	"RUB_Com": [0.0, 0.0],
@@ -36,12 +37,12 @@ var Rates = {
 
 var file = 'data.json';
 loadFile();
-setInterval(intervalFunc, 180000);// Перевірка наявності оновлень (900000 - 15 хв, 3600000 - 1 год)
+setInterval(intervalFunc, 60000);// Перевірка наявності оновлень (900000 - 15 хв, 3600000 - 1 год)
 
 
 function tabulate(string)
 {
-	while(string.length<5) string=' '+string;
+	while(string.length<5) string+=' ';
 	return string;
 }
 
@@ -128,6 +129,7 @@ function intervalFunc()
 				"RUB": [0.0, 0.0],
 				"PLN": [0.0, 0.0],
 				"GBP": [0.0, 0.0],
+                    "EURUSD": [0.0, 0.0],
 				"USD_Com": [0.0, 0.0],
 				"EUR_Com": [0.0, 0.0],
 				"RUB_Com": [0.0, 0.0],
@@ -151,6 +153,9 @@ function intervalFunc()
           			trigger=true;          		
           	}
 
+               cur_rates["EURUSD"][0]=table.eq(6).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
+               cur_rates["EURUSD"][1]=table.eq(6).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();
+
           	content=$('div.commercial').eq(0).children('.exchange_table').eq(0);
 			table=content.children('.line');			
 
@@ -159,7 +164,7 @@ function intervalFunc()
           		let buy_price=table.eq(i).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
           		let sell_price=table.eq(i).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();          		
 
-          		let key = Object.keys(cur_rates)[i+5];
+          		let key = Object.keys(cur_rates)[i+6];
           		cur_rates[key][0]=buy_price;
           		cur_rates[key][1]=sell_price;
 
@@ -170,15 +175,17 @@ function intervalFunc()
           	if(trigger)
           	{
           		let m_table="`";
-          		for (let i=0; i<9; i++)
+          		for (let i=0; i<10; i++)
           		{
           			let key = Object.keys(cur_rates)[i];
           			let currency_name=key.substr(0,3);
-          			m_table+=Flags[ids.indexOf(currency_name)]+currency_name;
+          			m_table+=Flags[ids.indexOf(currency_name)];
+                         if(i!=5) m_table+=currency_name;
+                         else m_table+="EUR/USD";
 
-          			if(cur_rates[key][0]<Rates[key][0]) m_table+="  " + down;
-          			else if(cur_rates[key][0]>Rates[key][0]) m_table+="  " + up;
-          			else m_table+="  " + no_change;
+          			if(cur_rates[key][0]<Rates[key][0]) m_table+=" " + down;
+          			else if(cur_rates[key][0]>Rates[key][0]) m_table+=" " + up;
+          			else m_table+=" " + no_change;
           			m_table+=tabulate(cur_rates[key][0])+" / ";
 
           			if(cur_rates[key][1]<Rates[key][1]) m_table+= down;
@@ -186,7 +193,10 @@ function intervalFunc()
           			else m_table+=no_change;
           			m_table+=cur_rates[key][1]+"\n";
 
-          			if(i==4) m_table+="`\n"+Comm_course+"Коммерційний курс:\n`";
+          			if(i==5)
+                         {
+                              m_table+="`\n"+Comm_course+"Комерційний курс:\n`";
+                         }
           		}
 
           		m_table+="`";
