@@ -2,10 +2,13 @@ var request = require('request'); //HTTP-запити
 var cheerio = require('cheerio'); //Парсинг
 var TelegramBot = require('node-telegram-bot-api');//Telegram-bot
 var fs=require('fs');//Робота з файлами
+var monk = require('monk');
 
 var token = '683429870:AAFYVsXZxSot3K3cIyH8vp-h_3j_lVTW4os';//Токен
 //var token = '418440998:AAGpggVT2H3_4am1qZmwoNaQ5BEUS6-UEzg'; // Устанавливаем токен (DEVELOP)
 var url = 'http://ok-finance.net.ua';//Сторінка, яка парситься
+var db = monk('ether:herokuDB@ds249025.mlab.com:49025/heroku_26kgq0gk');
+var dbRates = db.get('Rates');
 
 
 var bot = new TelegramBot(token, {polling: true});//створення бота
@@ -24,21 +27,6 @@ var ids = ['USD','EUR', 'RUB','PLN','GBP','CHF'];
 var adminid=310694905;
 var channel="@oktavarates";
 
-var Rates = {
-	"USD": [0.0, 0.0],
-	"EUR": [0.0, 0.0],
-	"RUB": [0.0, 0.0],
-	"PLN": [0.0, 0.0],
-	"GBP": [0.0, 0.0],
-     "EURUSD": [0.0, 0.0],
-	"USD_Com": [0.0, 0.0],
-	"EUR_Com": [0.0, 0.0],
-	"RUB_Com": [0.0, 0.0],
-	"PLN_Com": [0.0, 0.0]
-};
-
-var file = 'data.json';
-loadFile();
 setInterval(intervalFunc, 180000);// Перевірка наявності оновлень (180000 - 3хв, 900000 - 15 хв, 3600000 - 1 год)
 
 
@@ -48,12 +36,15 @@ function tabulate(string)
 	return string;
 }
 
-function loadFile()//Завантажити дані з файлу
-{	
-	let text = fs.readFileSync(file);
-	Rates=JSON.parse(text);
-} 
-
+function updateDB(cur_rates) //Запис користувачів в БД
+{
+     dbRates.findOneAndUpdate(
+      {},
+      { 
+        cur_rates
+      },
+      { upsert: true });
+}
 
 
 
@@ -126,94 +117,97 @@ function intervalFunc()
 		{
                if (!err && res.statusCode == 200) 
                {
-     			let $=cheerio.load(page);
-     			let content=$('div.exchange_table').eq(0);
-     			let table=content.children('.line');
+                    dbRates.find({},function(err,response)
+                    {
+                         let Rates = response[0].cur_rates;
+                         let $=cheerio.load(page);
+          			let content=$('div.exchange_table').eq(0);
+          			let table=content.children('.line');
 
-     			let cur_rates={
-     				"USD": [0.0, 0.0],
-     				"EUR": [0.0, 0.0],
-     				"RUB": [0.0, 0.0],
-     				"PLN": [0.0, 0.0],
-     				"GBP": [0.0, 0.0],
-                         "EURUSD": [0.0, 0.0],
-     				"USD_Com": [0.0, 0.0],
-     				"EUR_Com": [0.0, 0.0],
-     				"RUB_Com": [0.0, 0.0],
-     				"PLN_Com": [0.0, 0.0]
-     			};
+          			let cur_rates={
+          				"USD": [0.0, 0.0],
+          				"EUR": [0.0, 0.0],
+          				"RUB": [0.0, 0.0],
+          				"PLN": [0.0, 0.0],
+          				"GBP": [0.0, 0.0],
+                              "EURUSD": [0.0, 0.0],
+          				"USD_Com": [0.0, 0.0],
+          				"EUR_Com": [0.0, 0.0],
+          				"RUB_Com": [0.0, 0.0],
+          				"PLN_Com": [0.0, 0.0]
+          			};
 
 
-     			let trigger=false;
+          			let trigger=false;
 
-     			for(let i=0; i<5; i++)
-               	{          		
-               		let buy_price=table.eq(i).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
-               		let sell_price=table.eq(i).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();          		
+          			for(let i=0; i<5; i++)
+                    	{          		
+                    		let buy_price=table.eq(i).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
+                    		let sell_price=table.eq(i).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();          		
 
-               		let key = Object.keys(cur_rates)[i];
+                    		let key = Object.keys(cur_rates)[i];
 
-               		cur_rates[key][0]=buy_price;
-               		cur_rates[key][1]=sell_price;
+                    		cur_rates[key][0]=buy_price;
+                    		cur_rates[key][1]=sell_price;
 
-               		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
-               			trigger=true;          		
-               	}
+                    		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
+                    			trigger=true;          		
+                    	}
 
-                    cur_rates["EURUSD"][0]=table.eq(6).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
-                    cur_rates["EURUSD"][1]=table.eq(6).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();
+                         cur_rates["EURUSD"][0]=table.eq(6).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
+                         cur_rates["EURUSD"][1]=table.eq(6).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();
 
-                    if(cur_rates["EURUSD"][0]!=Rates["EURUSD"][0] || cur_rates["EURUSD"][1]!=Rates["EURUSD"][1])
-                         trigger=true;
+                         if(cur_rates["EURUSD"][0]!=Rates["EURUSD"][0] || cur_rates["EURUSD"][1]!=Rates["EURUSD"][1])
+                              trigger=true;
 
-               	content=$('div.commercial').eq(0).children('.exchange_table').eq(0);
-     			table=content.children('.line');			
+                    	content=$('div.commercial').eq(0).children('.exchange_table').eq(0);
+          			table=content.children('.line');			
 
-     			for(let i=0; i<4; i++)
-               	{          		
-               		let buy_price=table.eq(i).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
-               		let sell_price=table.eq(i).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();          		
+          			for(let i=0; i<4; i++)
+                    	{          		
+                    		let buy_price=table.eq(i).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
+                    		let sell_price=table.eq(i).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();          		
 
-               		let key = Object.keys(cur_rates)[i+6];
-               		cur_rates[key][0]=buy_price;
-               		cur_rates[key][1]=sell_price;
+                    		let key = Object.keys(cur_rates)[i+6];
+                    		cur_rates[key][0]=buy_price;
+                    		cur_rates[key][1]=sell_price;
 
-               		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
-               			trigger=true;          		
-               	}
+                    		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
+                    			trigger=true;          		
+                    	}
 
-               	if(trigger)
-               	{
-               		let m_table="`";
-               		for (let i=0; i<10; i++)
-               		{
-               			let key = Object.keys(cur_rates)[i];
-               			let currency_name=key.substr(0,3);
-               			m_table+=Flags[ids.indexOf(currency_name)];
-                              if(i!=5) m_table+=currency_name;
-                              else m_table+="EUR/USD";
+                    	if(trigger)
+                    	{
+                    		let m_table="`";
+                    		for (let i=0; i<10; i++)
+                    		{
+                    			let key = Object.keys(cur_rates)[i];
+                    			let currency_name=key.substr(0,3);
+                    			m_table+=Flags[ids.indexOf(currency_name)];
+                                   if(i!=5) m_table+=currency_name;
+                                   else m_table+="EUR/USD";
 
-               			if(cur_rates[key][0]<Rates[key][0]) m_table+=" " + down;
-               			else if(cur_rates[key][0]>Rates[key][0]) m_table+=" " + up;
-               			else m_table+=" " + no_change;
-               			m_table+=tabulate(cur_rates[key][0])+" / ";
+                    			if(cur_rates[key][0]<Rates[key][0]) m_table+=" " + down;
+                    			else if(cur_rates[key][0]>Rates[key][0]) m_table+=" " + up;
+                    			else m_table+=" " + no_change;
+                    			m_table+=tabulate(cur_rates[key][0])+" / ";
 
-               			if(cur_rates[key][1]<Rates[key][1]) m_table+= down;
-               			else if(cur_rates[key][1]>Rates[key][1]) m_table+= up;
-               			else m_table+=no_change;
-               			m_table+=cur_rates[key][1]+"\n";
+                    			if(cur_rates[key][1]<Rates[key][1]) m_table+= down;
+                    			else if(cur_rates[key][1]>Rates[key][1]) m_table+= up;
+                    			else m_table+=no_change;
+                    			m_table+=cur_rates[key][1]+"\n";
 
-               			if(i==5)
-                              {
-                                   m_table+="`\n"+Comm_course+"Комерційний курс:\n`";
-                              }
-               		}
+                    			if(i==5)
+                                   {
+                                        m_table+="`\n"+Comm_course+"Комерційний курс:\n`";
+                                   }
+                    		}
 
-               		m_table+="`";
-               		bot.sendMessage(channel, m_table, {parse_mode : "markdown"});
-               		Rates=cur_rates;
-               		fs.writeFileSync(file, JSON.stringify(Rates));
-               	}
+                    		m_table+="`";
+                    		bot.sendMessage(adminid, m_table, {parse_mode : "markdown"});
+                              updateDB(cur_rates);
+                    	}
+                    });
                }
                else console.log("Error");
           	
