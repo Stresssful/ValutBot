@@ -204,7 +204,7 @@ function intervalFunc()
                     		}
 
                     		m_table+="`";
-                    		bot.sendMessage(adminid, m_table, {parse_mode : "markdown"});
+                    		bot.sendMessage(channel, m_table, {parse_mode : "markdown"});
                               updateDB(cur_rates);
                     	}
                     });
