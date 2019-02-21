@@ -147,15 +147,15 @@ function intervalFunc()
 
                     		let key = Object.keys(cur_rates)[i];
 
-                    		cur_rates[key][0]=buy_price;
-                    		cur_rates[key][1]=sell_price;
+                    		cur_rates[key][0]=buy_price.replace(',','.');
+                    		cur_rates[key][1]=sell_price.replace(',','.');
 
                     		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
                     			trigger=true;          		
                     	}
 
-                         cur_rates["EURUSD"][0]=table.eq(6).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
-                         cur_rates["EURUSD"][1]=table.eq(6).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();
+                         cur_rates["EURUSD"][0]=table.eq(6).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim().replace(',','.');
+                         cur_rates["EURUSD"][1]=table.eq(6).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim().replace(',','.');
 
                          if(cur_rates["EURUSD"][0]!=Rates["EURUSD"][0] || cur_rates["EURUSD"][1]!=Rates["EURUSD"][1])
                               trigger=true;
@@ -169,8 +169,8 @@ function intervalFunc()
                     		let sell_price=table.eq(i).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();          		
 
                     		let key = Object.keys(cur_rates)[i+6];
-                    		cur_rates[key][0]=buy_price;
-                    		cur_rates[key][1]=sell_price;
+                    		cur_rates[key][0]=buy_price.replace(',','.');
+                    		cur_rates[key][1]=sell_price.replace(',','.');
 
                     		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
                     			trigger=true;          		
