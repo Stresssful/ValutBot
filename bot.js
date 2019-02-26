@@ -117,6 +117,7 @@ function intervalFunc()
 		{
                if (!err && res.statusCode == 200) 
                {
+                    let isEmpty=true;
                     dbRates.find({},function(err,response)
                     {
                          let Rates = response[0].cur_rates;
@@ -151,7 +152,9 @@ function intervalFunc()
                     		cur_rates[key][1]=sell_price.replace(',','.');
 
                     		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
-                    			trigger=true;          		
+                    			trigger=true;   
+                              if(cur_rates[key][0]!=0 && cur_rates[key][0]!=null && cur_rates[key][1]!=0 && cur_rates[key][1]!=null)       		
+                                   isEmpty=false;
                     	}
 
                          cur_rates["EURUSD"][0]=table.eq(6).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim().replace(',','.');
@@ -159,6 +162,8 @@ function intervalFunc()
 
                          if(cur_rates["EURUSD"][0]!=Rates["EURUSD"][0] || cur_rates["EURUSD"][1]!=Rates["EURUSD"][1])
                               trigger=true;
+                         if(cur_rates["EURUSD"][0]!=0 && cur_rates["EURUSD"][0]!=null && cur_rates["EURUSD"][1]!=0 && cur_rates["EURUSD"][1]!=null)             
+                              isEmpty=false;
 
                     	content=$('div.commercial').eq(0).children('.exchange_table').eq(0);
           			table=content.children('.line');			
@@ -173,10 +178,13 @@ function intervalFunc()
                     		cur_rates[key][1]=sell_price.replace(',','.');
 
                     		if(cur_rates[key][0]!=Rates[key][0] || cur_rates[key][1]!=Rates[key][1])
-                    			trigger=true;          		
+                    			trigger=true;  
+
+                              if(cur_rates[key][0]!=0 && cur_rates[key][0]!=null && cur_rates[key][1]!=0 && cur_rates[key][1]!=null)             
+                                   isEmpty=false;	
                     	}
 
-                    	if(trigger)
+                    	if(trigger && !isEmpty)
                     	{
                     		let m_table="`";
                     		for (let i=0; i<10; i++)
@@ -225,6 +233,15 @@ bot.onText(/\/get/, function(msg, match)
 	let fromId = msg.from.id;//telegram id відправника
 	getRates(function(err, msg){bot.sendMessage(fromId,msg,{parse_mode : "markdown"})});//Відправити пост          
 });
+
+bot.onText(/^\/change(.*|\n)*$/, function(msg, match) {
+      let fromId = msg.from.id;
+      if(adminid == fromId )
+      {
+        let text = msg.text.substr(7);
+        url=text; 
+      }
+    });
 
 bot.onText(/\/comm/, function(msg, match) 
 { 
