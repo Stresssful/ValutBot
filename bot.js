@@ -157,8 +157,8 @@ function intervalFunc()
                                    isEmpty=false;
                     	}
 
-                         cur_rates["EURUSD"][0]=table.eq(6).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim().replace(',','.');
-                         cur_rates["EURUSD"][1]=table.eq(6).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim().replace(',','.');
+                         cur_rates["EURUSD"][0]=table.eq(5).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim().replace(',','.');
+                         cur_rates["EURUSD"][1]=table.eq(5).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim().replace(',','.');
 
                          if(cur_rates["EURUSD"][0]!=Rates["EURUSD"][0] || cur_rates["EURUSD"][1]!=Rates["EURUSD"][1])
                               trigger=true;
