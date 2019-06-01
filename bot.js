@@ -27,7 +27,7 @@ var ids = ['USD','EUR', 'RUB','PLN','GBP','CHF'];
 var adminid=310694905;
 var channel="@oktavarates";
 
-setInterval(intervalFunc, 180000);// Перевірка наявності оновлень (180000 - 3хв, 900000 - 15 хв, 3600000 - 1 год)
+setInterval(intervalFunc, 300000);// Перевірка наявності оновлень (180000 - 3хв, 300000 - 5хв, 900000 - 15 хв, 3600000 - 1 год)
 
 
 function tabulate(string)
