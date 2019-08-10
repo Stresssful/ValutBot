@@ -27,7 +27,10 @@ var ids = ['USD','EUR', 'RUB','PLN','GBP','CHF'];
 var adminid=310694905;
 var channel="@oktavarates";
 
-setInterval(intervalFunc, 300000);// Перевірка наявності оновлень (180000 - 3хв, 300000 - 5хв, 900000 - 15 хв, 3600000 - 1 год)
+checkTimeInterval();
+setInterval(checkTimeInterval, 3600000);
+
+//var intervalId = setInterval(intervalFunc, 300000); // Перевірка наявності оновлень (180000 - 3хв, 300000 - 5хв, 900000 - 15 хв, 3600000 - 1 год)
 
 
 function tabulate(string)
@@ -112,6 +115,7 @@ function getCommericalRates(callback)
 
 function intervalFunc()
 {
+  console.log("Im working!");
 	request({uri:url, method:'GET', encoding:'utf-8'},
 		function (err, res, page) 
 		{
@@ -223,8 +227,31 @@ function intervalFunc()
 	);
 }
 
+function checkTimeInterval()
+{
+  let hour = toLocalTime(new Date().getUTCHours()); //current Ukraine Time
+  console.log(hour);
+  if(hour>21 || hour<9) 
+  {
+    console.log("clear interval");
+    clearInterval(intervalId);
+  }
+  else
+  {
+    console.log("set interval");
+    intervalId = setInterval(intervalFunc, 300000);
+  }
+}
 
+function toLocalTime(hour)
+{
+  let result = hour + 3;
 
+  if(result>23)  
+    return result - 24;
+  else 
+    return result;
+}
 
 
 
