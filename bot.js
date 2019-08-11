@@ -27,6 +27,7 @@ var ids = ['USD','EUR', 'RUB','PLN','GBP','CHF'];
 var adminid=310694905;
 var channel="@oktavarates";
 
+var isNotSet=true;
 checkTimeInterval();
 setInterval(checkTimeInterval, 3600000);
 
@@ -233,13 +234,21 @@ function checkTimeInterval()
   console.log(hour);
   if(hour>21 || hour<9) 
   {
-    console.log("clear interval");
-    clearInterval(intervalId);
+    if(!isNotSet)
+    {
+      console.log("clear interval");
+      clearInterval(intervalId);
+      isNotSet=true;
+    }
   }
   else
   {
-    console.log("set interval");
-    intervalId = setInterval(intervalFunc, 300000);
+    if(isNotSet)
+    {
+      console.log("set interval");
+      intervalId = setInterval(intervalFunc, 300000);
+      isNotSet=false;
+    }
   }
 }
 
