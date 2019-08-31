@@ -29,7 +29,7 @@ var channel="@oktavarates";
 
 var isNotSet=true;
 checkTimeInterval();
-setInterval(checkTimeInterval, 7200000‬);
+setInterval(checkTimeInterval, 7200000);
 
 //var intervalId = setInterval(intervalFunc, 300000); // Перевірка наявності оновлень (180000 - 3хв, 300000 - 5хв, 900000 - 15 хв, 3600000 - 1 год)
 
