@@ -1,9 +1,10 @@
+require('dotenv').config(); 
 var request = require('request'); //HTTP-запити
 var cheerio = require('cheerio'); //Парсинг
 var TelegramBot = require('node-telegram-bot-api');//Telegram-bot
 var mongoClient = require('mongodb').MongoClient;
 
-var token = '683429870:AAFYVsXZxSot3K3cIyH8vp-h_3j_lVTW4os';//Токен
+var token = process.env.TOKEN;//Токен
 //var token = '418440998:AAGpggVT2H3_4am1qZmwoNaQ5BEUS6-UEzg'; // Устанавливаем токен (DEVELOP)
 var url = 'http://ok-finance.net.ua';//Сторінка, яка парситься
 
@@ -24,7 +25,7 @@ var no_change = ' ';
 var Flags = [USA_Flag, EUR_Flag, RUS_Flag, POL_Flag, GBP_Flag, CHF_Flag];
 var ids = ['USD','EUR', 'RUB','PLN','GBP','CHF'];
 var adminid=310694905;
-var channel="@oktavarates";
+var channel="@svinnoryl";
 
 var isNotSet=true;
 checkTimeInterval();
