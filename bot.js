@@ -14,7 +14,6 @@ client.connect();
 var bot = new TelegramBot(token, {polling: true});//створення бота
 var USA_Flag='🇺🇸';
 var EUR_Flag='🇪🇺';
-var RUS_Flag='🇷🇺';
 var POL_Flag='🇵🇱';
 var CHF_Flag='🇨🇭';
 var GBP_Flag='🇬🇧';
@@ -22,8 +21,8 @@ var Comm_course='💰';
 var up = '↑';
 var down = '↓';
 var no_change = ' ';
-var Flags = [USA_Flag, EUR_Flag, RUS_Flag, POL_Flag, GBP_Flag, CHF_Flag];
-var ids = ['USD','EUR', 'RUB','PLN','GBP','CHF'];
+var Flags = [USA_Flag, EUR_Flag,  POL_Flag, GBP_Flag, CHF_Flag];
+var ids = ['USD','EUR', 'PLN','GBP','CHF'];
 var adminid=310694905;
 var channel="@svinnoryl";
 
@@ -131,13 +130,11 @@ async function intervalFunc()
           		let cur_rates={
           			"USD": [0.0, 0.0],
           			"EUR": [0.0, 0.0],
-          			"RUB": [0.0, 0.0],
           			"PLN": [0.0, 0.0],
           			"GBP": [0.0, 0.0],
                     "EURUSD": [0.0, 0.0],
           			"USD_Com": [0.0, 0.0],
           			"EUR_Com": [0.0, 0.0],
-          			"RUB_Com": [0.0, 0.0],
           			"PLN_Com": [0.0, 0.0]
 				  };
 				  
