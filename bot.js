@@ -140,7 +140,7 @@ async function intervalFunc()
 				  
           		let trigger=false;
 
-          		for(let i=0; i<5; i++)
+          		for(let i=0; i<4; i++)
                 {          		
                     let buy_price=table.eq(i).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
                     let sell_price=table.eq(i).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();          		
@@ -167,7 +167,7 @@ async function intervalFunc()
                 content=$('div.commercial').eq(0).children('.exchange_table').eq(0);
           		table=content.children('.line');			
 
-          		for(let i=0; i<4; i++)
+          		for(let i=0; i<3; i++)
                 {          		
                     let buy_price=table.eq(i).children('.buy').eq(0).text().substr(21,6).replace('\n','').trim();
                     let sell_price=table.eq(i).children('.sell').eq(0).text().substr(21,6).replace('\n','').trim();          		
@@ -186,12 +186,12 @@ async function intervalFunc()
                 if(trigger && !isEmpty)
                 {
                     let m_table="`";
-                    for (let i=0; i<10; i++)
+                    for (let i=0; i<8; i++)
                     {
                     	let key = Object.keys(cur_rates)[i];
                     	let currency_name=key.substr(0,3);
                     	m_table+=Flags[ids.indexOf(currency_name)];
-						if(i!=5) 
+						if(i!=4) 
 							m_table+=currency_name;
 						else 
 							m_table+="EUR/USD";
